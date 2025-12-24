@@ -1,0 +1,19 @@
+import { Hero } from '@/components/home/Hero'
+import { ValueProposition } from '@/components/home/ValueProposition'
+import { ServicesOverview } from '@/components/home/ServicesOverview'
+import { ProductsShowcase } from '@/components/home/ProductsShowcase'
+import { Testimonials } from '@/components/home/Testimonials'
+import { CTASection } from '@/components/home/CTASection'
+
+export default function HomePage() {
+  return (
+    <>
+      <Hero />
+      <ValueProposition />
+      <ServicesOverview />
+      <ProductsShowcase />
+      <Testimonials />
+      <CTASection />
+    </>
+  )
+}

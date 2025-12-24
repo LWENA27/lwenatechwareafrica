@@ -1,0 +1,196 @@
+# 🍽️ SmartMenu QR
+
+A **QR-code–based Smart Menu Food Ordering System** designed for restaurants and hotels. Customers scan a QR code to view the menu and place orders, while admins manage menu items, availability, and orders through a secure dashboard.
+
+This system is built with **simplicity, scalability, and real-world restaurant workflows** in mind.
+
+---
+
+## 🚀 Features
+
+### 👤 Customer Side
+
+* Scan QR code to access menu (no app install required)
+* View food items with price, description, and availability
+* Place orders directly from the menu
+* Works well on mobile devices
+
+### 🧑‍💼 Admin / Kitchen Side
+
+* Secure admin dashboard
+* Add, edit, delete, and copy menu items
+* Control food availability (Available / Out of Stock)
+* Manage categories and pricing
+* Real-time order visibility for kitchen staff
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer    | Technology            |
+| -------- | --------------------- |
+| Frontend | HTML, CSS, JavaScript |
+| Backend  | PHP                   |
+| Database | MySQL                 |
+| Server   | Apache (XAMPP/LAMP)   |
+| QR Code  | Dynamic QR linking    |
+
+---
+
+## 📁 Project Structure
+
+```
+smartmenu-qr/
+│
+├── admin/
+│   ├── menu.php          # Admin menu management page
+│   ├── orders.php        # Order management
+│   └── auth.php          # Admin authentication
+│
+├── customer/
+│   ├── index.php         # Customer menu view
+│   └── order.php         # Order placement
+│
+├── includes/
+│   ├── db.php            # Database connection
+│   └── functions.php     # Reusable helpers
+│
+├── assets/
+│   ├── css/
+│   ├── js/
+│   └── images/
+│
+├── database/
+│   └── smartmenu.sql     # Database schema
+│
+└── README.md
+```
+
+---
+
+## 🧱 Database Design (Core Tables)
+
+### `menu_items`
+
+| Column       | Type      | Description             |
+| ------------ | --------- | ----------------------- |
+| id           | INT       | Primary Key             |
+| name         | VARCHAR   | Food name               |
+| description  | TEXT      | Food description        |
+| price        | DECIMAL   | Food price              |
+| category     | VARCHAR   | Food category           |
+| stock        | INT       | Quantity                |
+| availability | BOOLEAN   | Available / Unavailable |
+| created_at   | TIMESTAMP | Record creation time    |
+
+### `orders`
+
+| Column     | Type      | Description                  |
+| ---------- | --------- | ---------------------------- |
+| id         | INT       | Primary Key                  |
+| table_no   | VARCHAR   | Table identifier             |
+| status     | VARCHAR   | pending / preparing / served |
+| created_at | TIMESTAMP | Order time                   |
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Prerequisites
+
+* XAMPP or LAMP stack
+* PHP 8+
+* MySQL 5.7+
+
+### 2️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/your-username/smartmenu-qr.git
+```
+
+### 3️⃣ Database Setup
+
+* Create a database named `smartmenu`
+* Import `database/smartmenu.sql`
+
+### 4️⃣ Configure Database
+
+Edit `includes/db.php`:
+
+```php
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$db   = 'smartmenu';
+```
+
+### 5️⃣ Run the Project
+
+* Start Apache & MySQL
+* Open in browser:
+
+```
+http://localhost/smartmenu-qr/
+```
+
+---
+
+## 🔐 Security Considerations
+
+* Prepared statements to prevent SQL injection
+* Admin authentication with session management
+* Role-based access (Admin / Kitchen)
+
+---
+
+## 📈 Future Enhancements
+
+* Mobile money integration (M-Pesa, HaloPesa)
+* Customer order tracking
+* Multi-restaurant (SaaS) support
+* Analytics dashboard
+* Offline-first PWA support
+
+---
+
+## 🎯 Use Cases
+
+* Restaurants
+* Hotels
+* Cafés
+* Food courts
+* Campus dining halls
+
+---
+
+## 🧠 Project Vision
+
+SmartMenu QR aims to **eliminate physical menus**, reduce wait times, and modernize restaurant operations—especially in environments where simplicity and speed matter.
+
+---
+
+## 🤝 Contribution
+
+Contributions are welcome!
+
+1. Fork the repo
+2. Create a new branch
+3. Commit your changes
+4. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+## 👨‍💻 Author
+
+**Adam Lwena**
+Software Developer | SaaS Builder | Africa-focused Solutions
+
+---
+
+⭐ If you find this project useful, consider giving it a star!
