@@ -69,8 +69,8 @@ export default function Page({ params }: { params: { slug: string } }) {
           </ul>
 
           <div className="flex gap-3">
-            <Link href="/contact" className="btn btn-primary">
-              Get a Quote
+            <Link href="/register" className="btn btn-primary">
+              Start Free Trial
             </Link>
             <Link href="/services" className="btn btn-ghost">
               All Services

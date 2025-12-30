@@ -148,11 +148,57 @@ export default function RegisterPage() {
 
       const userId = authData.user.id;
 
-      // Step 2: Create tenant
+      // Step 2: Create client (company) first
+      const { data: clientData, error: clientError } = await supabase
+        .from("clients")
+        .insert([{
+          name: formData.companyName,
+          is_active: true
+        }])
+        .select()
+        .single();
+
+      if (clientError) throw new Error(`Failed to create organization: ${clientError.message}`);
+
+      const clientId = clientData.id;
+
+      // Step 3: Create global user with client_id
+      const { error: globalUserError } = await supabase
+        .from("global_users")
+        .insert([{
+          id: userId,
+          email: formData.email.toLowerCase().trim(),
+          name: formData.name,
+          client_id: clientId,
+          role: "admin",
+          is_client_owner: true
+        }]);
+
+      if (globalUserError) throw new Error(`Failed to create user profile: ${globalUserError.message}`);
+
+      // Update client with primary contact
+      await supabase
+        .from("clients")
+        .update({ primary_contact_id: userId })
+        .eq("id", clientId);
+
+      // Step 4: Get SMS Gateway Pro product ID
+      const { data: productData, error: productError } = await supabase
+        .from("products")
+        .select("id")
+        .eq("schema_name", "sms_gateway")
+        .single();
+
+      if (productError || !productData) throw new Error("SMS Gateway Pro product not found");
+
+      const productId = productData.id;
+
+      // Step 5: Create tenant in sms_gateway schema
       const tenantSlug = generateSlug(formData.companyName);
       const { data: tenantData, error: tenantError } = await supabase
-        .from("sms_gateway_tenants")
+        .from("sms_gateway.tenants")
         .insert([{
+          client_id: clientId,
           name: formData.companyName,
           slug: tenantSlug,
           status: "active"
@@ -160,13 +206,13 @@ export default function RegisterPage() {
         .select()
         .single();
 
-      if (tenantError) throw new Error(`Failed to create organization: ${tenantError.message}`);
+      if (tenantError) throw new Error(`Failed to create SMS Gateway tenant: ${tenantError.message}`);
 
       const tenantId = tenantData.id;
 
-      // Step 3: Link user to tenant as owner
+      // Step 6: Link user to tenant as owner
       const { error: memberError } = await supabase
-        .from("tenant_members")
+        .from("sms_gateway.tenant_members")
         .insert([{
           tenant_id: tenantId,
           user_id: userId,
@@ -175,9 +221,9 @@ export default function RegisterPage() {
 
       if (memberError) throw new Error(`Failed to link user to organization: ${memberError.message}`);
 
-      // Step 4: Create user profile
+      // Step 7: Create user profile in sms_gateway schema
       const { error: profileError } = await supabase
-        .from("users")
+        .from("sms_gateway.users")
         .insert([{
           id: userId,
           email: formData.email.toLowerCase().trim(),
@@ -187,10 +233,10 @@ export default function RegisterPage() {
           role: "admin"
         }]);
 
-      if (profileError) throw new Error(`Failed to create user profile: ${profileError.message}`);
+      if (profileError) throw new Error(`Failed to create SMS Gateway profile: ${profileError.message}`);
 
-      // Step 5: Initialize user settings
-      await supabase.from("user_settings").insert([{
+      // Step 8: Initialize user settings
+      await supabase.from("sms_gateway.user_settings").insert([{
         user_id: userId,
         sms_channel: "native",
         theme: "light",
@@ -198,21 +244,34 @@ export default function RegisterPage() {
         notifications_enabled: true
       }]);
 
-      // Step 6: Create trial subscription (3 months free - valid for 2025 & 2026 signups)
+      // Step 9: Create product subscription with trial (3 months free - valid for 2025 & 2026 signups)
       const currentYear = new Date().getFullYear();
+      const startDate = new Date();
+      const endDate = new Date(startDate);
+      
       if (currentYear === 2025 || currentYear === 2026) {
-        const startDate = new Date();
-        const endDate = new Date(startDate);
+        // 3-month free trial
         endDate.setMonth(endDate.getMonth() + 3);
 
-        await supabase.from("trial_subscriptions").insert([{
-          tenant_id: tenantId,
-          user_id: userId,
-          start_date: startDate.toISOString(),
-          end_date: endDate.toISOString(),
+        await supabase.from("product_subscriptions").insert([{
+          client_id: clientId,
+          product_id: productId,
+          subscription_type: "trial",
           status: "active",
-          offer_year: 2026,
-          customization_requests: []
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString()
+        }]);
+      } else {
+        // Regular subscription
+        endDate.setMonth(endDate.getMonth() + 1);
+
+        await supabase.from("product_subscriptions").insert([{
+          client_id: clientId,
+          product_id: productId,
+          subscription_type: "monthly",
+          status: "pending",
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString()
         }]);
       }
 

@@ -58,7 +58,7 @@ export function Header() {
         {/* CTA Button */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
           <Button variant="cta" asChild>
-            <Link href="/contact">Get a Quote</Link>
+            <Link href="/register">Start Free Trial</Link>
           </Button>
         </div>
 
@@ -98,8 +98,8 @@ export function Header() {
                   </div>
                   <div className="py-6">
                     <Button variant="cta" className="w-full" asChild>
-                      <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
-                        Get a Quote
+                      <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
+                        Start Free Trial
                       </Link>
                     </Button>
                   </div>
