@@ -242,7 +242,7 @@ rm -rf .next
 
 ## 📧 Need Help?
 
-Contact: **techwareafrica@gmail.com**
+Contact: **techwareafrican@gmail.com**
 
 ---
 
